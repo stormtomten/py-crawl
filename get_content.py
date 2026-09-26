@@ -6,7 +6,7 @@ from bs4 import BeautifulSoup, Tag
 def get_heading_from_html(html: str) -> str:
     soup = BeautifulSoup(html, "html.parser")
 
-    h_tag = soup.find(["h1", "h2"])
+    h_tag = soup.find("h1") or soup.find("h2")
     return h_tag.get_text(strip=True) if isinstance(h_tag, Tag) else ""
 
 
