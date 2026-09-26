@@ -3,7 +3,7 @@ import unittest
 from crawl import normalize_url
 
 
-class TestCrawl(unittest.TestCase):
+class TestNormalizeURL(unittest.TestCase):
     def test_strip_https_scheme(self):
         input_url = "https://www.boot.dev/blog/path"
         actual = normalize_url(input_url)
