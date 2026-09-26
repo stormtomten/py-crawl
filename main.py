@@ -1,5 +1,7 @@
 import sys
 
+from crawl import get_html
+
 
 def main():
     if len(sys.argv) < 2:
@@ -8,9 +10,11 @@ def main():
     elif len(sys.argv) > 2:
         print("too many arguments provided")
         sys.exit(1)
-    BASE_URL = sys.argv[1]
+    base_url = sys.argv[1]
 
-    print(f"starting crawl of: {BASE_URL}")
+    print(f"starting crawl of: {base_url}")
+    result = get_html(base_url)
+    print(result)
 
 
 if __name__ == "__main__":

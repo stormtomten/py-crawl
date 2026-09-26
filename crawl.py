@@ -1,5 +1,7 @@
 from urllib.parse import urlsplit
 
+import requests
+
 
 def normalize_url(raw: str) -> str:
     parsed_url = urlsplit(raw)
@@ -16,3 +18,15 @@ def normalize_url(raw: str) -> str:
         normalized_url = f"{normalized_url}{parsed_url.path.removesuffix('/').lower()}"
 
     return normalized_url
+
+
+def get_html(url: str):
+    response = requests.get(url, headers={"User-Agent": "BootCrawler/1.0"})
+    if response.status_code >= 400:
+        raise ValueError(f"response status code: {response.status_code}")
+    if not response.headers.get("Content-Type"):
+        raise ValueError("no content-type header")
+    if "text/html" not in response.headers.get("Content-Type"):
+        raise ValueError('response not "text/html"')
+
+    return response.text
