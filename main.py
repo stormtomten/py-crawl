@@ -1,3 +1,4 @@
+import argparse
 import asyncio
 import sys
 
@@ -5,25 +6,20 @@ from async_crawler import crawl_site_async
 
 
 async def main():
-    if len(sys.argv) < 2:
-        print("no website provided")
+    parser = argparse.ArgumentParser()
+    parser.add_argument("base_url", type=str)
+    parser.add_argument("max_concurrency", type=int, nargs="?", default=3)
+    parser.add_argument("max_pages", type=int, nargs="?", default=10)
+    args = parser.parse_args()
+    if args.max_concurrency < 0:
+        print("max concurrency must be a positive integer")
         sys.exit(1)
-    elif len(sys.argv) > 3:
-        print("too many arguments provided")
+    if args.max_pages < 0:
+        print("max pages must be a positive integer")
         sys.exit(1)
-    base_url = sys.argv[1]
-    max_concurrency = 5
-    if len(sys.argv) == 3:
-        try:
-            max_concurrency = int(sys.argv[2])
-            if max_concurrency < 1:
-                raise ValueError
-        except ValueError:
-            print("max_concurrency must be a positive integer")
-            sys.exit(1)
 
-    print(f"starting crawl of: {base_url}")
-    result = await crawl_site_async(base_url, max_concurrency)
+    print(f"starting crawl of: {args.base_url}")
+    result = await crawl_site_async(args.base_url, args.max_concurrency, args.max_pages)
     print(f"Number of pages crawled: {len(result)}")
     for page in result.values():
         print(f"\n{page['url']}")
