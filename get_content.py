@@ -22,18 +22,20 @@ def get_first_paragraph_from_html(html: str) -> str:
 
 def get_urls_from_html(html: str, base_url: str) -> list[str]:
     soup = BeautifulSoup(html, "html.parser")
-    anchors = soup.find_all("a")
+    anchors = [tag for tag in soup.find_all("a") if isinstance(tag, Tag)]
 
-    hrefs = [tag.get("href") for tag in anchors if tag.get("href")]
+    hrefs = [
+        href for tag in anchors if isinstance(href := tag.get("href"), str) and href
+    ]
     links = [urljoin(base_url, href) for href in hrefs]
     return links
 
 
 def get_images_from_html(html: str, base_url: str) -> list[str]:
     soup = BeautifulSoup(html, "html.parser")
-    images = soup.find_all("img")
+    images = [tag for tag in soup.find_all("img") if isinstance(tag, Tag)]
 
-    srcs = [tag.get("src") for tag in images if tag.get("src")]
+    srcs = [src for tag in images if isinstance(src := tag.get("src"), str) and src]
     image_urls = [urljoin(base_url, src) for src in srcs]
 
     return image_urls
