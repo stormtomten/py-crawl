@@ -1,22 +1,32 @@
+import asyncio
 import sys
 
-from crawl import crawl_page
+from async_crawler import crawl_site_async
 
 
-def main():
+async def main():
     if len(sys.argv) < 2:
         print("no website provided")
         sys.exit(1)
-    elif len(sys.argv) > 2:
+    elif len(sys.argv) > 3:
         print("too many arguments provided")
         sys.exit(1)
     base_url = sys.argv[1]
+    max_concurrency = 5
+    if len(sys.argv) == 3:
+        try:
+            max_concurrency = int(sys.argv[2])
+            if max_concurrency < 1:
+                raise ValueError
+        except ValueError:
+            print("max_concurrency must be a positive integer")
+            sys.exit(1)
 
     print(f"starting crawl of: {base_url}")
-    result = crawl_page(base_url)
+    result = await crawl_site_async(base_url, max_concurrency)
     print(f"Number of pages crawled: {len(result)}")
-    for url, page in result.items():
-        print(f"\n{url}")
+    for page in result.values():
+        print(f"\n{page['url']}")
         print(f"\theading: {page['heading']}")
         print(f"\tfirst paragraph: {page['first_paragraph']}")
         print(
@@ -25,4 +35,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())
